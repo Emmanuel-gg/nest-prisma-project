@@ -8,7 +8,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -22,13 +21,15 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { Prisma, User } from '@prisma/client';
 import { CreateUsersDto, CreateUsersResponse } from './dto/create-users.dto';
 import { UserResponse, UsersResponse } from './dto/users.dto';
 import { UpdateUsersDto } from './dto/update-users.dto';
 import { BaseResponse } from 'src/base/interface/base-response';
 import { ErrorResponse } from 'src/base/interface/error-response';
+import { Roles } from 'src/roles/roles.decorator';
+import { Role } from 'src/enums/role.enum';
+import { PublicAccess } from 'src/public/public.decorator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -60,6 +61,7 @@ export class UsersController {
     description: 'User already exists.',
     type: ErrorResponse,
   })
+  @PublicAccess()
   public async create(
     @Body() body: Prisma.UserCreateInput,
   ): Promise<CreateUsersResponse> {
@@ -79,7 +81,6 @@ export class UsersController {
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   public async findAll() {
     const users = await this.usersService.find({});
     return {
@@ -100,7 +101,6 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @Get(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   public async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const user = await this.usersService.findOne({ id });
 
@@ -132,7 +132,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   public async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() body: Prisma.UserUpdateInput,
@@ -167,7 +167,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
   public async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     const result = await this.usersService.delete({ id });
 

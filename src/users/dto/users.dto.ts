@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { Role } from '@prisma/client';
+import { IsDate, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import {
   BasePaginationResponse,
   BaseResponse,
@@ -55,6 +56,11 @@ export class UsersDto {
   @ApiPropertyOptional()
   @IsDate()
   deletedAt?: Date;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(Role)
+  role: Role;
 }
 
 export class UsersResponse extends BasePaginationResponse {

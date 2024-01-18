@@ -52,25 +52,21 @@ export class UsersService {
     where: Prisma.UserWhereUniqueInput;
     data: Prisma.UserUpdateInput;
   }): Promise<User> {
-    try {
-      const { where, data } = params;
+    const { where, data } = params;
 
-      if (data.password) {
-        //delete data.password;
-      }
-
-      const whereParam: Prisma.UserWhereUniqueInput = {
-        ...where,
-        deletedAt: null,
-      };
-
-      return this.prisma.user.update({
-        data,
-        where: whereParam,
-      });
-    } catch (error) {
-      console.log('error', error);
+    if (data.password) {
+      //delete data.password;
     }
+
+    const whereParam: Prisma.UserWhereUniqueInput = {
+      ...where,
+      deletedAt: null,
+    };
+
+    return this.prisma.user.update({
+      data,
+      where: whereParam,
+    });
   }
 
   async delete(whereParam: Prisma.UserWhereUniqueInput): Promise<User> {

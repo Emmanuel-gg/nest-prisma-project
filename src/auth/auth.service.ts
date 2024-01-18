@@ -25,7 +25,7 @@ export class AuthService {
     if (!compare) {
       throw new NotFoundException("Username or password doesn't match");
     }
-    const payload = { sub: user.id, username: user.username };
+    const payload = { sub: user.id, username: user.username, role: user.role };
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 }
